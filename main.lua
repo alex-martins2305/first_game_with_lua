@@ -10,6 +10,16 @@ Nave={
     Y=Screen_height-70,
 }
 
+Meteoro={
+    src="image/meteoro.png",
+    meteoro_width=10,
+    meteoro_height=10,
+    --MX=math.random(Screen_width),
+    MX=300,
+    MY=-60,
+    angulo=0
+}
+
 Enemys={}
 function cria_Enemy()
     Enemy={
@@ -57,6 +67,7 @@ function love.load()
     Background=love.graphics.newImage("images/background.png")
     Nave.image=love.graphics.newImage("images/nave.png")
     Enemy_Nave=love.graphics.newImage("images/enemy_nave.png")
+    Meteoro.image=love.graphics.newImage("images/meteoro.png")
 end
 
 -- Increase the size of the rectangle every frame.
@@ -69,6 +80,8 @@ function love.update(dt)
     cria_Enemy()
   end
   move_Enemy()
+  Meteoro.angulo=Meteoro.angulo+0.01
+  Meteoro.MX=Meteoro.MX+1
 end
 
 function love.draw()
@@ -77,4 +90,5 @@ function love.draw()
     for k, Enemy in pairs(Enemys) do
         love.graphics.draw(Enemy_Nave,Enemy.EX,Enemy.EY)
     end
+    love.graphics.draw(Meteoro.image, Meteoro.mx, Meteoro.my, Meteoro.angulo)
 end
