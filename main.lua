@@ -1,5 +1,6 @@
 Screen_height=480
 Screen_width=320
+Max_Enemys=12
 
 Nave={
     src="images/nave.png",
@@ -8,6 +9,30 @@ Nave={
     X=(Screen_width-72)/2,
     Y=Screen_height-70,
 }
+
+Enemys={}
+function cria_Enemy()
+    Enemy={
+        EX=math.random(Screen_width),
+        EY=-60,
+        E_speed=math.random(3)
+    }
+    table.insert(Enemys, Enemy)
+end
+
+function remove_Enemys()
+    for i = #Enemys, 1, -1 do
+        if Enemys[i].EY > Screen_height then
+            table.remove(Enemys,i)
+        end 
+    end
+end 
+
+function move_Enemy()
+    for k, Enemy in pairs(Enemys) do
+        Enemy.EY=Enemy.EY+ Enemy.E_speed
+    end
+end
 
 function moveNave()
     if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
@@ -26,10 +51,12 @@ end
 
 -- Load some default values for our rectangle.
 function love.load()
+    math.randomseed(os.time())
     love.window.setMode(Screen_width,Screen_height,{resizable=false})
     love.window.setTitle("Galaxy")
     Background=love.graphics.newImage("images/background.png")
     Nave.image=love.graphics.newImage("images/nave.png")
+    Enemy_Nave=love.graphics.newImage("images/enemy_nave.png")
 end
 
 -- Increase the size of the rectangle every frame.
@@ -37,11 +64,17 @@ function love.update(dt)
   if love.keyboard.isDown("a","s","w","d","up","down","right","left") then
     moveNave()
   end
+  remove_Enemys()
+  if #Enemys<Max_Enemys then
+    cria_Enemy()
+  end
+  move_Enemy()
 end
 
--- Draw a coloured rectangle.
 function love.draw()
     love.graphics.draw(Background,0,0)
     love.graphics.draw(Nave.image,Nave.X,Nave.Y)
-    -- In versions prior to 11.0, color component values are (0, 102, 102)
+    for k, Enemy in pairs(Enemys) do
+        love.graphics.draw(Enemy_Nave,Enemy.EX,Enemy.EY)
+    end
 end
