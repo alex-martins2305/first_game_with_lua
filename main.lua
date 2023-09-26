@@ -12,7 +12,9 @@ function cria_Meteoro()
         M_speed=math.random(3),
         angulo=math.random(90),
         M_angular_speed=math.random(-1,1),
-        M_move_X=math.random(-1,1)
+        M_move_X=math.random(-1,1),
+        M_width=20,
+        M_height=20
     }
     table.insert(Meteoros, Meteoro)
 end
@@ -40,6 +42,8 @@ function cria_Enemy()
     Enemy={
         EX=math.random(Screen_width),
         EY=-60,
+        E_height=20,
+        E_width=20,
         E_speed=math.random(3)
     }
     table.insert(Enemys, Enemy)
@@ -62,8 +66,8 @@ end
 --Nave:
 Nave={
     src="images/nave.png",
-    Nave_width=60,
-    Nave_height=60,
+    Nave_width=20,
+    Nave_height=20,
     X=(Screen_width-72)/2,
     Y=Screen_height-70,
     N_speed=2,
@@ -109,6 +113,35 @@ function moveNave()
     end
 end
 
+function  destroy_Nave()
+    Nave.src="images/nave_explosion.png"
+    Nave.image=love.graphics.newImage(Nave.src)
+    Nave.Nave_height=50
+    Nave.Nave_width=50
+    Game_Over=true
+end
+
+--Colision:
+
+function Colision(X1,Y1,W1,H1, X2,Y2,W2,H2)
+    return X2 < X1+W1 and
+           X1 < X2+W2 and
+           Y1 < Y2+H2 and
+           Y2 < Y1+H1
+end
+
+function verify_colisions()
+    for k, Enemy in pairs(Enemys) do
+        if Colision(Enemy.EX, Enemy.EY, Enemy.E_width, Enemy.E_height, Nave.X, Nave.Y, Nave.Nave_width, Nave.Nave_height) then
+            destroy_Nave()
+        end
+    end
+    for k, Meteoro in pairs(Meteoros) do
+        if Colision(Meteoro.MX, Meteoro.MY, Meteoro.M_width, Meteoro.M_height, Nave.X, Nave.Y, Nave.Nave_width, Nave.Nave_height) then
+            destroy_Nave()
+        end
+    end
+end
 -- Load some default values for our rectangle.
 function love.load()
     math.randomseed(os.time())
@@ -122,20 +155,22 @@ end
 
 -- Increase the size of the rectangle every frame.
 function love.update(dt)
-  if love.keyboard.isDown("a","s","w","d","up","down","right","left") then
-    moveNave()
-  end
-  remove_Enemys()
-  if #Enemys<Max_Enemys then
-    cria_Enemy()
-  end
-  move_Enemy()
-
-  remove_Meteoros()
-  if #Meteoros<Max_Meteoros then
-    cria_Meteoro()
-  end
-  move_Meteoro()
+    if not Game_Over then
+        if love.keyboard.isDown("a","s","w","d","up","down","right","left") then
+            moveNave()
+        end
+        remove_Enemys()
+        if #Enemys<Max_Enemys then
+            cria_Enemy()
+        end
+        move_Enemy()
+        remove_Meteoros()
+        if #Meteoros<Max_Meteoros then
+            cria_Meteoro()
+        end
+        move_Meteoro()
+        verify_colisions() 
+    end
 end
 
 function love.draw()
