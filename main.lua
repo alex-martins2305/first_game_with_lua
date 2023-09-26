@@ -13,8 +13,9 @@ function cria_Meteoro()
         angulo=math.random(90),
         M_angular_speed=math.random(-1,1),
         M_move_X=math.random(-1,1),
-        M_width=20,
-        M_height=20
+        M_size_variation=math.random(1.1),
+        M_width=70,
+        M_height=70
     }
     table.insert(Meteoros, Meteoro)
 end
@@ -66,8 +67,8 @@ end
 --Nave:
 Nave={
     src="images/nave.png",
-    Nave_width=20,
-    Nave_height=20,
+    Nave_width=70,
+    Nave_height=70,
     X=(Screen_width-72)/2,
     Y=Screen_height-70,
     N_speed=2,
@@ -149,8 +150,9 @@ function love.load()
     love.window.setTitle("Galaxy")
     Background=love.graphics.newImage("images/background.png")
     Nave.image=love.graphics.newImage("images/nave.png")
-    Enemy_Nave=love.graphics.newImage("images/enemy_nave.png")
-    Meteoro_img=love.graphics.newImage("images/meteoro.png")
+    Enemy_Nave=love.graphics.newImage("images/enemy_nave2.png")
+    Meteoro_img=love.graphics.newImage("images/meteoro2.png")
+    game_over=love.graphics.newImage("images/game_over.png")
 end
 
 -- Increase the size of the rectangle every frame.
@@ -181,7 +183,9 @@ function love.draw()
         love.graphics.draw(Enemy_Nave,Enemy.EX,Enemy.EY)
     end
     for k, Meteoro in pairs(Meteoros) do
-        love.graphics.draw(Meteoro_img, Meteoro.MX, Meteoro.MY, Meteoro.angulo, 0.7,0.7, 35,35)
+        love.graphics.draw(Meteoro_img, Meteoro.MX, Meteoro.MY, Meteoro.angulo,Meteoro.M_size_variation,Meteoro.M_size_variation, 35,35)
     end
-    
+    if Game_Over then
+        love.graphics.draw(game_over, (Screen_height-340)/2, (Screen_width+20)/2)
+    end
 end
