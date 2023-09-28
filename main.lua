@@ -14,8 +14,8 @@ function cria_Meteoro()
         M_angular_speed=math.random(-1,1),
         M_move_X=math.random(-1,1),
         -- M_size_variation=math.random(1.1),
-        M_width=30,
-        M_height=30
+        M_width=70,
+        M_height=70
     }
     table.insert(Meteoros, Meteoro)
 end
@@ -32,7 +32,6 @@ function move_Meteoro()
     for k, Meteoro in pairs(Meteoros) do
         Meteoro.MY=Meteoro.MY+ Meteoro.M_speed
         Meteoro.angulo=Meteoro.angulo + 0.01*Meteoro.M_angular_speed
-        Meteoro.MY=Meteoro.MY+1
         -- Meteoro.MY=Meteoro.MY+0.1
         Meteoro.MX=Meteoro.MX+Meteoro.M_move_X
     end
@@ -44,8 +43,8 @@ function cria_Enemy()
     Enemy={
         EX=math.random(Screen_width),
         EY=-60,
-        E_height=20,
-        E_width=20,
+        E_height=35,
+        E_width=35,
         E_speed=math.random(3)
     }
     table.insert(Enemys, Enemy)
@@ -61,8 +60,9 @@ end
 
 function move_Enemy()
     for k, Enemy in pairs(Enemys) do
-        -- Enemy.EY=Enemy.EY+ 0.1
         Enemy.EY=Enemy.EY+ Enemy.E_speed
+        -- Enemy.EY=Enemy.EY+ 0.1
+
     end
 end
 
@@ -140,6 +140,7 @@ end
 function move_Shots()
     for i=#Nave.shots,1,-1 do
         if Nave.shots[i].shot_Y>0 then
+            -- Nave.shots[i].shot_Y= Nave.shots[i].shot_Y-0.3
             Nave.shots[i].shot_Y= Nave.shots[i].shot_Y-3
         else
             table.remove(Nave.shots, i)
@@ -163,7 +164,9 @@ function verify_colisions()
         end
     end
     for i, Meteoro in pairs(Meteoros) do
+        -- print( Meteoro.MX, Meteoro.MY, Meteoro.M_width, Meteoro.M_height, Nave.X, Nave.Y, Nave.Nave_width, Nave.Nave_height)
         if Colision(Meteoro.MX, Meteoro.MY, Meteoro.M_width, Meteoro.M_height, Nave.X, Nave.Y, Nave.Nave_width, Nave.Nave_height) then
+            print( Meteoro.MX, Meteoro.MY, Meteoro.M_width, Meteoro.M_height, Nave.X, Nave.Y, Nave.Nave_width, Nave.Nave_height)
             destroy_Nave()
             change_sound()
         end
@@ -254,7 +257,7 @@ function love.draw()
         love.graphics.draw(Enemy_Nave,Enemy.EX,Enemy.EY)
     end
     for k, Meteoro in pairs(Meteoros) do
-        love.graphics.draw(Meteoro_img, Meteoro.MX, Meteoro.MY, Meteoro.angulo,1,1, 35,35)
+        love.graphics.draw(Meteoro_img, Meteoro.MX, Meteoro.MY, Meteoro.angulo,1,1, 25,25)
     end
     for k, shot in pairs(Nave.shots) do
         love.graphics.draw(shot_img, shot.shot_X, shot.shot_Y)
