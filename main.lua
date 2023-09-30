@@ -82,7 +82,7 @@ Nave={
 }
 
 function moveNave()
-    if WINNER1==true then
+    if WINNER1==true and Nave.Y > Nave.image:getHeight()-Screen_height then
         Nave.Y=Nave.Y-2
         print("subindo")
     end
