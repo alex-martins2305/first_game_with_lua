@@ -1,3 +1,6 @@
+SCORE=0
+WINNER1=false
+
 Screen_height=480
 Screen_width=320
 Max_Enemys=5
@@ -79,6 +82,10 @@ Nave={
 }
 
 function moveNave()
+    if WINNER1==true then
+        Nave.Y=Nave.Y-2
+        print("subindo")
+    end
     if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
         if Nave.Y>0 then
             Nave.Y=Nave.Y-Nave.N_speed
@@ -164,7 +171,6 @@ function verify_colisions()
         end
     end
     for i, Meteoro in pairs(Meteoros) do
-        -- print( Meteoro.MX, Meteoro.MY, Meteoro.M_width, Meteoro.M_height, Nave.X, Nave.Y, Nave.Nave_width, Nave.Nave_height)
         if Colision(Meteoro.MX, Meteoro.MY, Meteoro.M_width, Meteoro.M_height, Nave.X, Nave.Y, Nave.Nave_width, Nave.Nave_height) then
             print( Meteoro.MX, Meteoro.MY, Meteoro.M_width, Meteoro.M_height, Nave.X, Nave.Y, Nave.Nave_width, Nave.Nave_height)
             destroy_Nave()
@@ -176,6 +182,7 @@ function verify_colisions()
             if Colision(Nave.shots[i].shot_X, Nave.shots[i].shot_Y, Nave.shots[i].shot_width, Nave.shots[i].shot_height, Meteoros[j].MX, Meteoros[j].MY, Meteoros[j].M_width, Meteoros[j].M_height) then
                 table.remove(Nave.shots, i)
                 table.remove(Meteoros,j)
+                SCORE=SCORE+2
                 break
             end
         end
@@ -185,6 +192,7 @@ function verify_colisions()
             if Colision(Nave.shots[i].shot_X, Nave.shots[i].shot_Y, Nave.shots[i].shot_width, Nave.shots[i].shot_height, Enemys[j].EX, Enemys[j].EY, Enemys[j].E_width, Enemys[j].E_height) then
                 table.remove(Nave.shots, i)
                 table.remove(Enemys,j)
+                SCORE=SCORE+3
                 break
             end
         end
@@ -192,9 +200,16 @@ function verify_colisions()
 end
 
 function change_sound()
-    env_music:stop()
-    game_over_music:play()
+    if game_over then
+        env_music:stop()
+        game_over_music:play()
+    end
+    if WINNER1==true then
+        env_music:stop()
+        level_up_music:play()
+    end
 end
+
 -- Load some default values for our rectangle.
 function love.load()
     math.randomseed(os.time())
@@ -208,6 +223,8 @@ function love.load()
     -- Enemy_Nave=love.graphics.newImage("images/enemy_nave _teste.jpg")
     -- Meteoro_img=love.graphics.newImage("images/meteoro_teste.jpg")
     game_over=love.graphics.newImage("images/game_over.png")
+    level_up=love.graphics.newImage("images/level_up.png")
+
     --SOUNDS
     colision=love.audio.newSource("sounds/colision3.mp3","static")
     env_music=love.audio.newSource("sounds/env_music.wav","static")
@@ -215,6 +232,8 @@ function love.load()
     env_music:play()
     game_over_music=love.audio.newSource("sounds/game_over.mp3","static")
     shot_sound=love.audio.newSource("sounds/nava_shot2.mp3", "static")
+    level_up_music=love.audio.newSource("sounds/level_up.mp3", "static")
+
     --SHOTS
     shot_img=love.graphics.newImage("images/shot_img.png")
     
@@ -222,7 +241,29 @@ end
 
 -- Increase the size of the rectangle every frame.
 function love.update(dt)
-    if not Game_Over then
+    if SCORE>=100 then
+        WINNER1=true
+        change_sound()
+        if love.keyboard.isDown("a","s","w","d","up","down","right","left") then
+            moveNave()
+        end
+        if WINNER1==true then
+            moveNave()
+        end
+        remove_Enemys()
+        if #Enemys<Max_Enemys then
+            cria_Enemy()
+        end
+        move_Enemy()
+        remove_Meteoros()
+        if #Meteoros<Max_Meteoros then
+            cria_Meteoro()
+        end
+        move_Meteoro()
+        move_Shots()
+    end 
+
+    if not Game_Over  and WINNER1 ==false then
         if love.keyboard.isDown("a","s","w","d","up","down","right","left") then
             moveNave()
         end
@@ -244,7 +285,7 @@ end
 function love.keypressed(key)
     if key=="escape" then
         love.event.quit()
-    elseif key=="space" and not Game_Over then
+    elseif key=="space" and not Game_Over and WINNER1==false then
         shot()
     end
 end
@@ -263,6 +304,10 @@ function love.draw()
         love.graphics.draw(shot_img, shot.shot_X, shot.shot_Y)
     end
     if Game_Over then
-        love.graphics.draw(game_over, (Screen_height-340)/2, (Screen_width+20)/2)
+        love.graphics.draw(game_over, (Screen_width/2-game_over:getWidth()/2),(Screen_height/2-game_over:getHeight()/2))
     end
+    if WINNER1==true then
+        love.graphics.draw(level_up, (Screen_width/2-level_up:getWidth()/2),(Screen_height/2-level_up:getHeight()/2))
+    end
+    love.graphics.print("SCORE "..SCORE, 0,0)
 end
