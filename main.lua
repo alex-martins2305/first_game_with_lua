@@ -17,8 +17,8 @@ function cria_Meteoro()
         M_angular_speed=math.random(-1,1),
         M_move_X=math.random(-1,1),
         -- M_size_variation=math.random(1.1),
-        M_width=70,
-        M_height=70
+        M_width=62,
+        M_height=37
     }
     table.insert(Meteoros, Meteoro)
 end
@@ -46,8 +46,8 @@ function cria_Enemy()
     Enemy={
         EX=math.random(Screen_width),
         EY=-60,
-        E_height=35,
-        E_width=35,
+        E_height=40,
+        E_width=40,
         E_speed=math.random(3)
     }
     table.insert(Enemys, Enemy)
@@ -72,8 +72,8 @@ end
 --Nave:
 Nave={
     src="images/nave.png",
-    Nave_width=20,
-    Nave_height=20,
+    Nave_width=60,
+    Nave_height=60,
     X=(Screen_width-72)/2,
     Y=Screen_height-70,
     N_speed=2,
@@ -135,7 +135,7 @@ end
 
 function shot()
     local shot={
-        shot_X=Nave.X +Nave.Nave_width,
+        shot_X=Nave.X +Nave.Nave_width/2-5,
         shot_Y=Nave.Y,
         shot_width=16,
         shot_height=16    
